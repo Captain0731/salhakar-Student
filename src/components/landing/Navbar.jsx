@@ -18,10 +18,6 @@ const navItems = [
         path: "/judgment-access",
       },
       { 
-        label: "Judgment by Name", 
-        path: "/judgment-by-name",
-      },
-      { 
         label: "Law Library", 
         path: "/law-library"
       },
@@ -30,24 +26,8 @@ const navItems = [
         path: "/law-mapping"
       },
       { 
-        label: "Legal Template", 
-        path: "/legal-template" 
-      },
-      { 
         label: "YouTube Summarizer", 
         path: "/youtube-summary",
-      },
-      { 
-        label: "DOCX Viewer", 
-        path: "/view-docx",
-      },
-      { 
-        label: "PDF Viewer", 
-        path: "/react-pdf-viewer",
-      },
-      { 
-        label: "Judgment Details", 
-        path: "/judgment-details",
       },
     ],
   },

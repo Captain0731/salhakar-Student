@@ -182,14 +182,14 @@ const Features = React.forwardRef((props, ref) => {
       secondaryColor: "#1E65AD",
       path: "/law-library"
     },
-    {
-      id: 4,
-      title: "Legal Templates",
-      description: "Professional legal document templates for various purposes including contracts, agreements, and legal notices.",
-      color: "#1E65AD",
-      secondaryColor: "#8C969F",
-      path: "/legal-template"
-    },
+    // {
+    //   id: 4,
+    //   title: "Legal Templates",
+    //   description: "Professional legal document templates for various purposes including contracts, agreements, and legal notices.",
+    //   color: "#1E65AD",
+    //   secondaryColor: "#8C969F",
+    //   path: "/legal-template"
+    // },
     {
       id: 5,
       title: "Smart Dashboard",

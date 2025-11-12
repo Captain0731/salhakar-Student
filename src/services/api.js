@@ -1465,6 +1465,46 @@ class ApiService {
     }
   }
 
+  // Delete judgment by ID
+  async deleteJudgement(judgementId) {
+    try {
+      const response = await fetch(`${this.baseURL}/api/judgements/${judgementId}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders()
+      });
+      
+      return await this.handleResponse(response);
+    } catch (err) {
+      console.error('Error deleting judgment:', err);
+      throw err;
+    }
+  }
+
+  // Delete judgment by name (searches and deletes)
+  async deleteJudgementByName(judgmentName) {
+    try {
+      // First, search for the judgment by name
+      const searchResponse = await this.getJudgements({
+        search: judgmentName,
+        title: judgmentName,
+        limit: 50
+      });
+
+      if (!searchResponse.data || searchResponse.data.length === 0) {
+        throw new Error(`No judgment found with name: ${judgmentName}`);
+      }
+
+      // If multiple found, delete the first match (or could be enhanced to show selection)
+      const judgmentToDelete = searchResponse.data[0];
+      
+      // Delete the judgment
+      return await this.deleteJudgement(judgmentToDelete.id);
+    } catch (err) {
+      console.error('Error deleting judgment by name:', err);
+      throw err;
+    }
+  }
+
   // Get central act by ID
   async getCentralActById(actId) {
     try {
