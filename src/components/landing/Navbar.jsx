@@ -189,8 +189,8 @@ const Navbar = () => {
           <img
             src="/logo4.png"
             alt="सलहाकार Logo"
-            className={`max-h-24 sm:max-h-16 md:max-h-18 w-auto object-contain group-hover:scale-110 transition-all duration-500 ease-out ${
-              isScrolled ? 'max-h-16 sm:max-h-16 md:max-h-18' : 'max-h-16 sm:max-h-16 md:max-h-18'
+            className={`max-h-24 sm:max-h-12 md:max-h-16 w-auto object-contain group-hover:scale-110 transition-all duration-500 ease-out ${
+              isScrolled ? 'max-h-16 sm:max-h-12 md:max-h-16' : 'max-h-16 sm:max-h-12 md:max-h-16'
             }`}
             style={{ height: 'auto' }}
             onError={(e) => {

@@ -1,5 +1,5 @@
 // API Service for Legal Platform - Complete Integration
-const API_BASE_URL = 'https://operantly-unchattering-ernie.ngrok-free.dev';
+const API_BASE_URL = 'https://unquestioned-gunnar-medially.ngrok-free.dev';
 
 // Fallback URLs in case the primary one fails
 const FALLBACK_URLS = [
@@ -1728,6 +1728,45 @@ class ApiService {
     }
     
     return await response.text(); // Return Markdown as text
+  }
+
+  // Get judgment summary using Gemini
+  async getJudgementSummary(judgementId, options = {}) {
+    const token = localStorage.getItem('access_token') || localStorage.getItem('accessToken') || localStorage.getItem('token');
+    const headers = {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    };
+
+    const payload = {
+      format: options.format || 'markdown',
+      max_chars_per_chunk: options.max_chars_per_chunk || 2000,
+      ...(options.focus && { focus: options.focus })
+    };
+
+    const response = await fetch(`${this.baseURL}/api/judgements/${judgementId}/summary`, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = `Failed to fetch judgment summary: ${response.statusText}`;
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.detail || errorMessage;
+      } catch (e) {
+        // If not JSON, use the text as is
+        if (errorText) {
+          errorMessage = errorText;
+        }
+      }
+      throw new Error(errorMessage);
+    }
+
+    return await response.json();
   }
 
   // Bookmark an act (central or state)

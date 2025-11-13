@@ -1049,232 +1049,236 @@ export default function ViewPDF() {
                   
                   {/* Action Buttons Container */}
                   <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                    {/* Summary Button with Animation */}
-                    <style>{`
-                      .summary-animated-button {
-                        --h-button: 36px;
-                        --w-button: 90px;
-                        --round: 0.75rem;
-                        cursor: pointer;
-                        position: relative;
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        overflow: hidden;
-                        transition: all 0.25s ease;
-                        background: radial-gradient(
-                            65.28% 65.28% at 50% 100%,
-                            rgba(207, 155, 99, 0.8) 0%,
-                            rgba(207, 155, 99, 0) 100%
-                          ),
-                          linear-gradient(135deg, #1E65AD 0%, #CF9B63 100%);
-                        border-radius: var(--round);
-                        border: none;
-                        outline: none;
-                        padding: 8px 14px;
-                        font-family: 'Roboto', sans-serif;
-                      }
-                      .summary-animated-button::before,
-                      .summary-animated-button::after {
-                        content: "";
-                        position: absolute;
-                        inset: var(--space);
-                        transition: all 0.5s ease-in-out;
-                        border-radius: calc(var(--round) - var(--space));
-                        z-index: 0;
-                      }
-                      .summary-animated-button::before {
-                        --space: 1px;
-                        background: linear-gradient(
-                          177.95deg,
-                          rgba(255, 255, 255, 0.19) 0%,
-                          rgba(255, 255, 255, 0) 100%
-                        );
-                      }
-                      .summary-animated-button::after {
-                        --space: 2px;
-                        background: radial-gradient(
-                            65.28% 65.28% at 50% 100%,
-                            rgba(207, 155, 99, 0.8) 0%,
-                            rgba(207, 155, 99, 0) 100%
-                          ),
-                          linear-gradient(135deg, #1E65AD 0%, #CF9B63 100%);
-                      }
-                      .summary-animated-button:active {
-                        transform: scale(0.95);
-                      }
-                      .summary-points-wrapper {
-                        overflow: hidden;
-                        width: 100%;
-                        height: 100%;
-                        pointer-events: none;
-                        position: absolute;
-                        z-index: 1;
-                      }
-                      .summary-points-wrapper .summary-point {
-                        bottom: -10px;
-                        position: absolute;
-                        animation: floating-points infinite ease-in-out;
-                        pointer-events: none;
-                        width: 2px;
-                        height: 2px;
-                        background-color: #fff;
-                        border-radius: 9999px;
-                      }
-                      @keyframes floating-points {
-                        0% {
-                          transform: translateY(0);
-                        }
-                        85% {
-                          opacity: 0;
-                        }
-                        100% {
-                          transform: translateY(-55px);
-                          opacity: 0;
-                        }
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(1) {
-                        left: 10%;
-                        opacity: 1;
-                        animation-duration: 2.35s;
-                        animation-delay: 0.2s;
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(2) {
-                        left: 30%;
-                        opacity: 0.7;
-                        animation-duration: 2.5s;
-                        animation-delay: 0.5s;
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(3) {
-                        left: 25%;
-                        opacity: 0.8;
-                        animation-duration: 2.2s;
-                        animation-delay: 0.1s;
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(4) {
-                        left: 44%;
-                        opacity: 0.6;
-                        animation-duration: 2.05s;
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(5) {
-                        left: 50%;
-                        opacity: 1;
-                        animation-duration: 1.9s;
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(6) {
-                        left: 75%;
-                        opacity: 0.5;
-                        animation-duration: 1.5s;
-                        animation-delay: 1.5s;
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(7) {
-                        left: 88%;
-                        opacity: 0.9;
-                        animation-duration: 2.2s;
-                        animation-delay: 0.2s;
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(8) {
-                        left: 58%;
-                        opacity: 0.8;
-                        animation-duration: 2.25s;
-                        animation-delay: 0.2s;
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(9) {
-                        left: 98%;
-                        opacity: 0.6;
-                        animation-duration: 2.6s;
-                        animation-delay: 0.1s;
-                      }
-                      .summary-points-wrapper .summary-point:nth-child(10) {
-                        left: 65%;
-                        opacity: 1;
-                        animation-duration: 2.5s;
-                        animation-delay: 0.2s;
-                      }
-                      .summary-inner {
-                        z-index: 2;
-                        gap: 6px;
-                        position: relative;
-                        width: 100%;
-                        color: white;
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 14px;
-                        font-weight: 500;
-                        line-height: 1.5;
-                        transition: color 0.2s ease-in-out;
-                        font-family: 'Roboto', sans-serif;
-                      }
-                      .summary-inner svg.summary-icon {
-                        width: 16px;
-                        height: 16px;
-                        transition: fill 0.1s linear;
-                      }
-                      .summary-animated-button:focus svg.summary-icon {
-                        fill: white;
-                      }
-                      .summary-animated-button:hover svg.summary-icon {
-                        fill: transparent;
-                        animation:
-                          dasharray 1s linear forwards,
-                          filled 0.1s linear forwards 0.95s;
-                      }
-                      @keyframes dasharray {
-                        from {
-                          stroke-dasharray: 0 0 0 0;
-                        }
-                        to {
-                          stroke-dasharray: 68 68 0 0;
-                        }
-                      }
-                      @keyframes filled {
-                        to {
-                          fill: white;
-                        }
-                      }
-                    `}</style>
-                    <button
-                      type="button"
-                      className="summary-animated-button"
-                      onClick={() => {
-                        if (!isUserAuthenticated) {
-                          navigate('/login');
-                          return;
-                        }
-                        // Open summary popup
-                        setSummaryPopupOpen(true);
-                      }}
-                      title="View Summary"
-                    >
-                      <div className="summary-points-wrapper">
-                        <i className="summary-point"></i>
-                        <i className="summary-point"></i>
-                        <i className="summary-point"></i>
-                        <i className="summary-point"></i>
-                        <i className="summary-point"></i>
-                        <i className="summary-point"></i>
-                        <i className="summary-point"></i>
-                        <i className="summary-point"></i>
-                        <i className="summary-point"></i>
-                        <i className="summary-point"></i>
-                      </div>
-                      <span className="summary-inner">
-                        <svg
-                          className="summary-icon"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2.5"
+                    {/* Summary Button with Animation - Only show when markdown view is active */}
+                    {showMarkdown && (
+                      <>
+                        <style>{`
+                          .summary-animated-button {
+                            --h-button: 36px;
+                            --w-button: 90px;
+                            --round: 0.75rem;
+                            cursor: pointer;
+                            position: relative;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            overflow: hidden;
+                            transition: all 0.25s ease;
+                            background: radial-gradient(
+                                65.28% 65.28% at 50% 100%,
+                                rgba(207, 155, 99, 0.8) 0%,
+                                rgba(207, 155, 99, 0) 100%
+                              ),
+                              linear-gradient(135deg, #1E65AD 0%, #CF9B63 100%);
+                            border-radius: var(--round);
+                            border: none;
+                            outline: none;
+                            padding: 8px 14px;
+                            font-family: 'Roboto', sans-serif;
+                          }
+                          .summary-animated-button::before,
+                          .summary-animated-button::after {
+                            content: "";
+                            position: absolute;
+                            inset: var(--space);
+                            transition: all 0.5s ease-in-out;
+                            border-radius: calc(var(--round) - var(--space));
+                            z-index: 0;
+                          }
+                          .summary-animated-button::before {
+                            --space: 1px;
+                            background: linear-gradient(
+                              177.95deg,
+                              rgba(255, 255, 255, 0.19) 0%,
+                              rgba(255, 255, 255, 0) 100%
+                            );
+                          }
+                          .summary-animated-button::after {
+                            --space: 2px;
+                            background: radial-gradient(
+                                65.28% 65.28% at 50% 100%,
+                                rgba(207, 155, 99, 0.8) 0%,
+                                rgba(207, 155, 99, 0) 100%
+                              ),
+                              linear-gradient(135deg, #1E65AD 0%, #CF9B63 100%);
+                          }
+                          .summary-animated-button:active {
+                            transform: scale(0.95);
+                          }
+                          .summary-points-wrapper {
+                            overflow: hidden;
+                            width: 100%;
+                            height: 100%;
+                            pointer-events: none;
+                            position: absolute;
+                            z-index: 1;
+                          }
+                          .summary-points-wrapper .summary-point {
+                            bottom: -10px;
+                            position: absolute;
+                            animation: floating-points infinite ease-in-out;
+                            pointer-events: none;
+                            width: 2px;
+                            height: 2px;
+                            background-color: #fff;
+                            border-radius: 9999px;
+                          }
+                          @keyframes floating-points {
+                            0% {
+                              transform: translateY(0);
+                            }
+                            85% {
+                              opacity: 0;
+                            }
+                            100% {
+                              transform: translateY(-55px);
+                              opacity: 0;
+                            }
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(1) {
+                            left: 10%;
+                            opacity: 1;
+                            animation-duration: 2.35s;
+                            animation-delay: 0.2s;
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(2) {
+                            left: 30%;
+                            opacity: 0.7;
+                            animation-duration: 2.5s;
+                            animation-delay: 0.5s;
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(3) {
+                            left: 25%;
+                            opacity: 0.8;
+                            animation-duration: 2.2s;
+                            animation-delay: 0.1s;
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(4) {
+                            left: 44%;
+                            opacity: 0.6;
+                            animation-duration: 2.05s;
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(5) {
+                            left: 50%;
+                            opacity: 1;
+                            animation-duration: 1.9s;
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(6) {
+                            left: 75%;
+                            opacity: 0.5;
+                            animation-duration: 1.5s;
+                            animation-delay: 1.5s;
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(7) {
+                            left: 88%;
+                            opacity: 0.9;
+                            animation-duration: 2.2s;
+                            animation-delay: 0.2s;
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(8) {
+                            left: 58%;
+                            opacity: 0.8;
+                            animation-duration: 2.25s;
+                            animation-delay: 0.2s;
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(9) {
+                            left: 98%;
+                            opacity: 0.6;
+                            animation-duration: 2.6s;
+                            animation-delay: 0.1s;
+                          }
+                          .summary-points-wrapper .summary-point:nth-child(10) {
+                            left: 65%;
+                            opacity: 1;
+                            animation-duration: 2.5s;
+                            animation-delay: 0.2s;
+                          }
+                          .summary-inner {
+                            z-index: 2;
+                            gap: 6px;
+                            position: relative;
+                            width: 100%;
+                            color: white;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 14px;
+                            font-weight: 500;
+                            line-height: 1.5;
+                            transition: color 0.2s ease-in-out;
+                            font-family: 'Roboto', sans-serif;
+                          }
+                          .summary-inner svg.summary-icon {
+                            width: 16px;
+                            height: 16px;
+                            transition: fill 0.1s linear;
+                          }
+                          .summary-animated-button:focus svg.summary-icon {
+                            fill: white;
+                          }
+                          .summary-animated-button:hover svg.summary-icon {
+                            fill: transparent;
+                            animation:
+                              dasharray 1s linear forwards,
+                              filled 0.1s linear forwards 0.95s;
+                          }
+                          @keyframes dasharray {
+                            from {
+                              stroke-dasharray: 0 0 0 0;
+                            }
+                            to {
+                              stroke-dasharray: 68 68 0 0;
+                            }
+                          }
+                          @keyframes filled {
+                            to {
+                              fill: white;
+                            }
+                          }
+                        `}</style>
+                        <button
+                          type="button"
+                          className="summary-animated-button"
+                          onClick={() => {
+                            if (!isUserAuthenticated) {
+                              navigate('/login');
+                              return;
+                            }
+                            // Open summary popup
+                            setSummaryPopupOpen(true);
+                          }}
+                          title="View Summary"
                         >
-                          <polyline points="13.18 1.37 13.18 9.64 21.45 9.64 10.82 22.63 10.82 14.36 2.55 14.36 13.18 1.37"></polyline>
-                        </svg>
-                        <span className="hidden sm:inline">Summary</span>
-                      </span>
-                    </button>
+                          <div className="summary-points-wrapper">
+                            <i className="summary-point"></i>
+                            <i className="summary-point"></i>
+                            <i className="summary-point"></i>
+                            <i className="summary-point"></i>
+                            <i className="summary-point"></i>
+                            <i className="summary-point"></i>
+                            <i className="summary-point"></i>
+                            <i className="summary-point"></i>
+                            <i className="summary-point"></i>
+                            <i className="summary-point"></i>
+                          </div>
+                          <span className="summary-inner">
+                            <svg
+                              className="summary-icon"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2.5"
+                            >
+                              <polyline points="13.18 1.37 13.18 9.64 21.45 9.64 10.82 22.63 10.82 14.36 2.55 14.36 13.18 1.37"></polyline>
+                            </svg>
+                            <span className="hidden sm:inline">Summary</span>
+                          </span>
+                        </button>
+                      </>
+                    )}
                     
                     {/* Notes Button - Fake when not logged in, Real when logged in */}
                     <style>{`
@@ -1287,7 +1291,7 @@ export default function ViewPDF() {
                         display: inline-flex;
                         align-items: center;
                         justify-content: center;
-                        overflow: hidden;
+                        overflow: visible;
                         transition: all 0.25s ease;
                         background: radial-gradient(
                             65.28% 65.28% at 50% 100%,
@@ -1300,6 +1304,9 @@ export default function ViewPDF() {
                         outline: none;
                         padding: 8px 14px;
                         font-family: 'Roboto', sans-serif;
+                      }
+                      .notes-animated-button .notes-points-wrapper {
+                        overflow: hidden;
                       }
                       .notes-animated-button::before,
                       .notes-animated-button::after {
@@ -1505,8 +1512,8 @@ export default function ViewPDF() {
                           <span className="hidden sm:inline">Notes</span>
                         </span>
                         {notesCount > 0 && (
-                          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center z-10">
-                            {notesCount}
+                          <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center z-20 shadow-lg" style={{ fontSize: notesCount > 9 ? '10px' : '11px', lineHeight: '1' }}>
+                            {notesCount > 99 ? '99+' : notesCount}
                           </span>
                         )}
                       </button>

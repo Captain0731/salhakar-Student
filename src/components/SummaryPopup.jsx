@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, FileText, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
 import apiService from "../services/api";
 
 const SummaryPopup = ({ isOpen, onClose, item, itemType }) => {
@@ -30,19 +31,39 @@ const SummaryPopup = ({ isOpen, onClose, item, itemType }) => {
 
       // Get summary based on item type
       if (itemType === "judgment") {
-        // For judgments, try to get summary from the item or generate it
-        summaryText = item.summary || item.description || "";
-        
-        // If no summary in item, try to fetch markdown and extract summary
-        if (!summaryText && item.id) {
+        // For judgments, use the backend summary endpoint (Gemini-powered)
+        if (item.id) {
           try {
-            const markdown = await apiService.getJudgementByIdMarkdown(item.id);
-            // Extract first few paragraphs as summary
-            const paragraphs = markdown.split("\n\n").filter(p => p.trim().length > 50);
-            summaryText = paragraphs.slice(0, 3).join("\n\n");
+            const summaryResponse = await apiService.getJudgementSummary(item.id, {
+              format: 'markdown'
+            });
+            
+            if (summaryResponse && summaryResponse.success && summaryResponse.summary) {
+              summaryText = summaryResponse.summary;
+            } else {
+              // Fallback: try to get summary from the item
+              summaryText = item.summary || item.description || "";
+            }
           } catch (err) {
-            console.warn("Could not fetch markdown for summary:", err);
+            console.warn("Could not fetch summary from backend:", err);
+            // Fallback: try to get summary from the item
+            summaryText = item.summary || item.description || "";
+            
+            // If still no summary, try to fetch markdown and extract summary
+            if (!summaryText) {
+              try {
+                const markdown = await apiService.getJudgementByIdMarkdown(item.id);
+                // Extract first few paragraphs as summary
+                const paragraphs = markdown.split("\n\n").filter(p => p.trim().length > 50);
+                summaryText = paragraphs.slice(0, 3).join("\n\n");
+              } catch (markdownErr) {
+                console.warn("Could not fetch markdown for summary:", markdownErr);
+              }
+            }
           }
+        } else {
+          // No ID available, use item summary if available
+          summaryText = item.summary || item.description || "";
         }
       } else if (itemType === "act") {
         // For acts, use description or summary field
@@ -59,7 +80,7 @@ const SummaryPopup = ({ isOpen, onClose, item, itemType }) => {
       }
     } catch (err) {
       console.error("Error fetching summary:", err);
-      setError("Failed to load summary. Please try again.");
+      setError(err.message || "Failed to load summary. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -85,7 +106,7 @@ const SummaryPopup = ({ isOpen, onClose, item, itemType }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-20"
           onClick={onClose}
         >
           {/* Backdrop */}
@@ -155,8 +176,19 @@ const SummaryPopup = ({ isOpen, onClose, item, itemType }) => {
                   className="prose prose-sm sm:prose-base max-w-none"
                   style={{ fontFamily: "Roboto, sans-serif", color: "#1a1a1a" }}
                 >
-                  <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                    {summary}
+                  <div className="text-gray-700 leading-relaxed">
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => <p style={{ marginBottom: '0.75rem', marginTop: '0.75rem' }}>{children}</p>,
+                        ul: ({ children }) => <ul style={{ marginLeft: '1.5rem', marginBottom: '0.75rem', marginTop: '0.75rem', listStyleType: 'disc' }}>{children}</ul>,
+                        ol: ({ children }) => <ol style={{ marginLeft: '1.5rem', marginBottom: '0.75rem', marginTop: '0.75rem', listStyleType: 'decimal' }}>{children}</ol>,
+                        li: ({ children }) => <li style={{ marginBottom: '0.5rem' }}>{children}</li>,
+                        strong: ({ children }) => <strong style={{ fontWeight: 'bold', color: '#1E65AD' }}>{children}</strong>,
+                        em: ({ children }) => <em style={{ fontStyle: 'italic' }}>{children}</em>,
+                      }}
+                    >
+                      {summary}
+                    </ReactMarkdown>
                   </div>
                 </div>
               ) : (

@@ -332,57 +332,57 @@ export default function LegalChatbot() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F9FAFC' }}>
+    <div className="min-h-screen flex flex-col overflow-x-hidden" style={{ backgroundColor: '#F9FAFC' }}>
       <Navbar />
 
       {/* Chat Interface - Full Page */}
-      <div className="flex-1 flex flex-col pt-16 sm:pt-20">
+      <div className="flex-1 flex flex-col pt-14 sm:pt-16 md:pt-20 w-full overflow-x-hidden">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="flex-1 flex flex-col"
+          className="flex-1 flex flex-col w-full"
           style={{ 
-            height: 'calc(100vh - 64px)'
+            height: 'calc(100vh - 56px)'
           }}
         >
                 {/* Chat Header with Gradient */}
-                <div className="p-4 sm:p-5 md:p-6 border-b shadow-lg" style={{ 
+                <div className="p-3 sm:p-4 md:p-5 lg:p-6 border-b shadow-lg w-full overflow-x-hidden" style={{ 
                   background: 'linear-gradient(135deg, #1E65AD 0%, #2563eb 50%, #1E65AD 100%)',
                   borderColor: '#1E65AD'
                 }}>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 md:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0 w-full sm:w-auto">
                       <div className="relative flex-shrink-0">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-xl" style={{ 
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-xl" style={{ 
                           background: 'linear-gradient(135deg, #CF9B63 0%, #d4a574 100%)'
                         }}>
-                          <Bot className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                          <Bot className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
                         </div>
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-3 border-white shadow-lg">
+                        <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-400 rounded-full border-2 sm:border-3 border-white shadow-lg">
                           <div className="w-full h-full bg-green-500 rounded-full animate-pulse"></div>
                         </div>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-lg sm:text-xl font-bold truncate text-white" style={{ 
+                        <h3 className="text-base sm:text-lg md:text-xl font-bold truncate text-white" style={{ 
                           fontFamily: "'Heebo', 'Helvetica Hebrew Bold', sans-serif",
                           textShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}>
                           Kiki AI Assistant
                         </h3>
-                        <p className="text-sm sm:text-base flex items-center gap-2 truncate text-white/90" style={{ fontFamily: "'Roboto', sans-serif" }}>
-                          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0 shadow-sm"></span>
+                        <p className="text-xs sm:text-sm md:text-base flex items-center gap-1.5 sm:gap-2 truncate text-white/90" style={{ fontFamily: "'Roboto', sans-serif" }}>
+                          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0 shadow-sm"></span>
                           <span className="truncate">Online • Ready to help</span>
                         </p>
                       </div>
                     </div>
                     <button
                       onClick={clearChat}
-                      className="px-4 py-2 text-sm text-white border border-white/30 rounded-lg hover:bg-white/20 transition-all duration-200 font-medium flex items-center gap-2 flex-shrink-0 shadow-md hover:shadow-lg backdrop-blur-sm"
+                      className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-white border border-white/30 rounded-lg hover:bg-white/20 transition-all duration-200 font-medium flex items-center gap-1.5 sm:gap-2 flex-shrink-0 shadow-md hover:shadow-lg backdrop-blur-sm"
                       style={{ fontFamily: "'Roboto', sans-serif" }}
                       title="Clear Chat"
                     >
-                      <RotateCcw className="w-4 h-4" />
+                      <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       <span className="hidden sm:inline">Clear</span>
                     </button>
                   </div>
@@ -391,7 +391,7 @@ export default function LegalChatbot() {
                 {/* Messages Container */}
                 <div 
                   ref={messagesContainerRef}
-                  className="flex-1 overflow-y-auto p-4 sm:p-5 md:p-6 space-y-4 sm:space-y-5"
+                  className="flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 space-y-3 sm:space-y-4 md:space-y-5 w-full"
                   style={{ 
                     scrollbarWidth: 'thin',
                     scrollbarColor: '#CBD5E0 #F7FAFC',
@@ -408,9 +408,9 @@ export default function LegalChatbot() {
                         transition={{ duration: 0.3, delay: index * 0.05 }}
                       className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
-                        <div className={`flex items-start gap-2 sm:gap-3 max-w-[90%] sm:max-w-[85%] md:max-w-[75%] ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className={`flex items-start gap-2 sm:gap-3 max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[75%] ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                           {/* Avatar */}
-                          <div className={`flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shadow-md ${
+                          <div className={`flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-md ${
                             message.sender === 'user' 
                               ? '' 
                               : ''
@@ -420,14 +420,14 @@ export default function LegalChatbot() {
                             background: 'linear-gradient(135deg, #CF9B63 0%, #d4a574 100%)'
                           }}>
                             {message.sender === 'user' ? (
-                              <User className="w-5 h-5 text-white" />
+                              <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                             ) : (
-                              <Bot className="w-5 h-5 text-white" />
+                              <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                             )}
                           </div>
                           
                           {/* Message Bubble */}
-                          <div className={`rounded-2xl px-4 py-3 sm:px-5 sm:py-4 shadow-lg ${
+                          <div className={`rounded-xl sm:rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 md:px-5 md:py-4 shadow-lg ${
                             message.sender === 'user'
                               ? 'rounded-tr-sm'
                               : 'rounded-tl-sm'
@@ -545,20 +545,20 @@ export default function LegalChatbot() {
                       animate={{ opacity: 1, y: 0 }}
                       className="flex justify-start"
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-md" style={{ 
+                      <div className="flex items-start gap-2 sm:gap-3 max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[75%]">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-md" style={{ 
                           background: 'linear-gradient(135deg, #CF9B63 0%, #d4a574 100%)'
                         }}>
-                          <Bot className="w-5 h-5 text-white" />
+                          <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                         </div>
-                        <div className="rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg" style={{
+                        <div className="rounded-xl sm:rounded-2xl rounded-tl-sm px-3 py-2.5 sm:px-4 sm:py-3 shadow-lg" style={{
                           background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
                           border: '1px solid #E5E7EB'
                         }}>
-                          <div className="flex space-x-1.5">
-                            <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: '#1E65AD', animationDelay: '0s' }}></div>
-                            <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: '#1E65AD', animationDelay: '0.2s' }}></div>
-                            <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: '#1E65AD', animationDelay: '0.4s' }}></div>
+                          <div className="flex space-x-1 sm:space-x-1.5">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-bounce" style={{ backgroundColor: '#1E65AD', animationDelay: '0s' }}></div>
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-bounce" style={{ backgroundColor: '#1E65AD', animationDelay: '0.2s' }}></div>
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-bounce" style={{ backgroundColor: '#1E65AD', animationDelay: '0.4s' }}></div>
                           </div>
                         </div>
                       </div>
@@ -569,7 +569,7 @@ export default function LegalChatbot() {
                 </div>
 
                 {/* Input Area */}
-                <div className="p-4 sm:p-5 md:p-6 border-t bg-white shadow-lg" style={{ 
+                <div className="p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 border-t bg-white shadow-lg w-full overflow-x-hidden" style={{ 
                   borderColor: '#E5E7EB',
                   background: 'linear-gradient(to top, #ffffff 0%, #f8f9fa 100%)'
                 }}>
@@ -580,18 +580,18 @@ export default function LegalChatbot() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="mb-3 sm:mb-4 p-3 sm:p-4 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-lg sm:rounded-xl flex items-center gap-3 sm:gap-4"
+                        className="mb-2 sm:mb-3 md:mb-4 p-2 sm:p-3 md:p-4 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-lg sm:rounded-xl flex items-center gap-2 sm:gap-3 md:gap-4"
                       >
                         <div className="flex-shrink-0">
-                          <div className="relative w-10 h-10 sm:w-12 sm:h-12">
+                          <div className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12">
                             <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
-                            <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-red-600 rounded-full flex items-center justify-center">
-                              <Mic className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                            <div className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-red-600 rounded-full flex items-center justify-center">
+                              <Mic className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
                             </div>
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm sm:text-base font-semibold text-red-700 mb-1" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                          <p className="text-xs sm:text-sm md:text-base font-semibold text-red-700 mb-1" style={{ fontFamily: 'Roboto, sans-serif' }}>
                             Recording...
                           </p>
                           <div className="flex items-center gap-1">
@@ -604,8 +604,8 @@ export default function LegalChatbot() {
                               <div className="w-0.5 sm:w-1 bg-red-500 rounded-full animate-voice-bar" style={{ animationDelay: '0.5s', height: '12px' }}></div>
                               <div className="w-0.5 sm:w-1 bg-red-500 rounded-full animate-voice-bar" style={{ animationDelay: '0.6s', height: '8px' }}></div>
                             </div>
-                            <p className="text-xs sm:text-sm text-red-600 ml-2" style={{ fontFamily: 'Roboto, sans-serif' }}>
-                              Click mic button to stop
+                            <p className="text-xs sm:text-sm text-red-600 ml-1 sm:ml-2 truncate" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                              Click mic to stop
                             </p>
                           </div>
                         </div>
@@ -613,12 +613,12 @@ export default function LegalChatbot() {
                     )}
                   </AnimatePresence>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     {/* Voice Recording Button */}
                     <button
                       onClick={startRecording}
                       disabled={loading || isProcessingVoice}
-                      className={`w-12 h-12 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center flex-shrink-0 ${
+                      className={`w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-lg sm:rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center flex-shrink-0 ${
                         isRecording 
                           ? 'bg-red-600 hover:bg-red-700 text-white animate-pulse' 
                           : 'disabled:opacity-50 disabled:cursor-not-allowed'
@@ -630,9 +630,9 @@ export default function LegalChatbot() {
                       title={isRecording ? "Click to stop recording" : "Click to start recording"}
                     >
                       {isRecording ? (
-                        <MicOff className="w-5 h-5" />
+                        <MicOff className="w-4 h-4 sm:w-5 sm:h-5" />
                       ) : (
-                        <Mic className="w-5 h-5" />
+                        <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
                       )}
                     </button>
 
@@ -648,7 +648,7 @@ export default function LegalChatbot() {
                     />
                     <label
                       htmlFor="audio-file-input"
-                      className={`w-12 h-12 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center flex-shrink-0 cursor-pointer ${
+                      className={`w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-lg sm:rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center flex-shrink-0 cursor-pointer ${
                         loading || isProcessingVoice
                           ? 'opacity-50 cursor-not-allowed'
                           : ''
@@ -659,15 +659,15 @@ export default function LegalChatbot() {
                       }}
                       title="Upload audio file"
                     >
-                      <Upload className="w-5 h-5" />
+                      <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
                     </label>
 
-                    <div className="flex-1 relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
+                    <div className="flex-1 relative min-w-0">
+                      <div className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 z-10">
                         <img 
                           src="/uit3.GIF" 
                           alt="Message" 
-                          className="w-10 h-15"
+                          className="w-8 h-12 sm:w-10 sm:h-15"
                           style={{ objectFit: 'contain' }}
                         />
                       </div>
@@ -678,14 +678,14 @@ export default function LegalChatbot() {
                         onKeyPress={handleKeyPress}
                         placeholder="Ask your legal question..."
                         rows={1}
-                        className="w-full pr-11 py-3.5 text-sm sm:text-base border-2 rounded-xl focus:ring-2 transition-all resize-none overflow-hidden"
+                        className="w-full pr-9 sm:pr-11 py-2.5 sm:py-3 md:py-3.5 text-sm sm:text-base border-2 rounded-lg sm:rounded-xl focus:ring-2 transition-all resize-none overflow-hidden"
                         style={{ 
                           fontFamily: "'Roboto', sans-serif",
-                          minHeight: '48px',
+                          minHeight: '40px',
                           maxHeight: '120px',
                           borderColor: '#E5E7EB',
                           backgroundColor: '#F9FAFC',
-                          paddingLeft: '56px'
+                          paddingLeft: '48px'
                         }}
                         onFocus={(e) => {
                           e.target.style.borderColor = '#1E65AD';
@@ -704,25 +704,25 @@ export default function LegalChatbot() {
                       {inputMessage && (
                         <button
                           onClick={() => setInputMessage("")}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
+                          className="absolute right-2 sm:right-3 md:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10"
                         >
-                          <X className="w-4 h-4" />
+                          <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </button>
                       )}
                     </div>
                     <button
                       onClick={handleSendMessage}
                       disabled={loading || isProcessingVoice || !inputMessage.trim()}
-                      className="w-12 h-12 rounded-xl text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center flex-shrink-0"
+                      className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-lg sm:rounded-xl text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center flex-shrink-0"
                       style={{ 
                         fontFamily: "'Roboto', sans-serif",
                         background: 'linear-gradient(135deg, #1E65AD 0%, #2563eb 100%)'
                       }}
                     >
                       {(loading || isProcessingVoice) ? (
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       ) : (
-                        <Send className="w-5 h-5" />
+                        <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                       )}
                     </button>
                   </div>
