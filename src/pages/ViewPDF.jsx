@@ -2030,61 +2030,55 @@ export default function ViewPDF() {
                     </div>
                   ) : pdfUrl && pdfUrl.trim() !== "" ? (
                     /* PDF View */
-                  <div className="relative h-full w-full" style={{ minHeight: '350px', display: 'flex', flexDirection: 'column' }}>
-                    {/* PDF Embed - Try iframe first, fallback to button */}
-                    <div className="w-full h-full flex-1" style={{ minHeight: 0, position: 'relative' }}>
+                  <div className="relative h-full w-full" style={{ minHeight: isMobile ? '400px' : '350px', display: 'flex', flexDirection: 'column' }}>
+                    {/* PDF Embed - Display inline for both mobile and desktop */}
+                    <div className="w-full h-full flex-1" style={{ minHeight: isMobile ? '400px' : '350px', position: 'relative' }}>
                       <iframe
-                        src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&page=${currentPage}&zoom=page-fit&view=FitH`}
+                        src={`${pdfUrl}#toolbar=1&navpanes=0&scrollbar=1&page=${currentPage}&zoom=${isMobile ? 'page-width' : 'page-fit'}&view=FitH`}
                         className="absolute inset-0 w-full h-full border-0 rounded-lg"
                         title={location.state?.act ? 'Act PDF' : 'Judgment PDF'}
                         style={{ 
                           width: '100%', 
                           height: '100%',
-                          display: 'block'
+                          display: 'block',
+                          minHeight: isMobile ? '400px' : '350px'
                         }}
                         allow="fullscreen"
                         scrolling="auto"
                         onLoad={() => {
                           setLoading(false);
+                          setError("");
                         }}
                         onError={() => {
-                          // If iframe fails, show the button fallback
-                          setError("PDF cannot be embedded due to security restrictions");
+                          // On error, try to reload or show embedded view
+                          console.warn('PDF iframe error, trying alternative display');
+                          setError("");
                         }}
                       />
-                    </div>
-                        
-                    {/* Fallback PDF Access - Show when iframe fails */}
-                    {error && (
-                      <div className="absolute inset-0 bg-white flex items-center justify-center p-3 sm:p-4 md:p-8">
-                        <div className="text-center max-w-md w-full px-2">
-                          <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-24 md:h-24 mx-auto mb-3 sm:mb-4 md:mb-6 rounded-full bg-gradient-to-br flex items-center justify-center" 
-                               style={{ background: 'linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)' }}>
-                            <svg className="w-7 h-7 sm:w-8 sm:h-8 md:w-12 md:h-12" style={{ color: '#1E65AD' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </div>
-                          <h3 className="text-base sm:text-lg md:text-2xl font-bold mb-2 sm:mb-3 md:mb-4 px-2" style={{ color: '#1E65AD', fontFamily: 'Helvetica Hebrew Bold, sans-serif' }}>
-                            {location.state?.act ? 'Act PDF Document' : 'Judgment PDF Document'}
-                          </h3>
-                          <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-3 sm:mb-4 md:mb-6 px-2" style={{ fontFamily: 'Roboto, sans-serif' }}>
-                            The PDF cannot be embedded due to security restrictions. Click the button below to view the {location.state?.act ? 'act' : 'judgment'} PDF document in a new tab.
+                      
+                      {/* Alternative: Use object tag as fallback for mobile */}
+                      {isMobile && (
+                        <object
+                          data={pdfUrl}
+                          type="application/pdf"
+                          className="absolute inset-0 w-full h-full border-0 rounded-lg"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            minHeight: '400px',
+                            display: 'none'
+                          }}
+                          aria-label={location.state?.act ? 'Act PDF' : 'Judgment PDF'}
+                        >
+                          <p className="text-center p-4 text-gray-600">
+                            Your browser does not support PDFs. 
+                            <a href={pdfUrl} target="_self" className="text-blue-600 underline ml-1">
+                              Click here to view
+                            </a>
                           </p>
-                          <div className="space-y-2 sm:space-y-3 px-2">
-                            <button
-                              onClick={() => window.open(pdfUrl, '_blank')}
-                              className="w-full px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg hover:shadow-xl flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm md:text-base"
-                              style={{ fontFamily: 'Roboto, sans-serif' }}
-                            >
-                              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                              </svg>
-                              Open PDF Document
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                        </object>
+                      )}
+                    </div>
 
                     {/* Loading Overlay - Only show on desktop */}
                     {loading && !isMobile && (
