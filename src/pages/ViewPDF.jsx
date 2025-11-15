@@ -10,6 +10,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { FileText, StickyNote, Share2, Download } from "lucide-react";
 import { marked } from "marked";
 import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 export default function ViewPDF() {
   const navigate = useNavigate();
@@ -638,94 +639,402 @@ export default function ViewPDF() {
                                         }
                                       }
 
-                                      // PDF FILE SIZE OPTIMIZATION - TEXT-BASED APPROACH:
-                                      // Instead of using html2canvas (which creates large image-based PDFs),
-                                      // we'll use jsPDF's native text rendering for much smaller file sizes.
-                                      // This approach converts markdown to plain text and uses jsPDF's text() method.
+                                      // PDF GENERATION STRATEGY:
+                                      // - For English: Use text-based rendering (smallest file size)
+                                      // - For other languages (Gujarati, Hindi, etc.): Use html2canvas with optimized settings
+                                      //   because jsPDF's default fonts don't support Unicode/Indic scripts
 
-                                      // Convert markdown to plain text (strip formatting for smaller size)
-                                      let plainText = finalMarkdown
-                                        .replace(/#{1,6}\s+/g, '') // Remove markdown headers
-                                        .replace(/\*\*\*(.*?)\*\*\*/g, '$1') // Remove bold italic
-                                        .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
-                                        .replace(/\*(.*?)\*/g, '$1') // Remove italic
-                                        .replace(/`(.*?)`/g, '$1') // Remove inline code
-                                        .replace(/```[\s\S]*?```/g, '') // Remove code blocks
-                                        .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove links, keep text
-                                        .replace(/!\[([^\]]*)\]\([^\)]+\)/g, '') // Remove images
-                                        .replace(/\n{3,}/g, '\n\n') // Replace multiple newlines with double
-                                        .trim();
+                                      if (currentLang === 'en') {
+                                        // TEXT-BASED APPROACH FOR ENGLISH (smallest file size)
+                                        // Convert markdown to plain text (strip formatting for smaller size)
+                                        let plainText = finalMarkdown
+                                          .replace(/#{1,6}\s+/g, '') // Remove markdown headers
+                                          .replace(/\*\*\*(.*?)\*\*\*/g, '$1') // Remove bold italic
+                                          .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+                                          .replace(/\*(.*?)\*/g, '$1') // Remove italic
+                                          .replace(/`(.*?)`/g, '$1') // Remove inline code
+                                          .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+                                          .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove links, keep text
+                                          .replace(/!\[([^\]]*)\]\([^\)]+\)/g, '') // Remove images
+                                          .replace(/\n{3,}/g, '\n\n') // Replace multiple newlines with double
+                                          .trim();
 
-                                      // Create PDF using jsPDF with text-based rendering (much smaller file size)
-                                      const pdf = new jsPDF('p', 'mm', 'a4');
-                                      const pageWidth = pdf.internal.pageSize.getWidth();
-                                      const pageHeight = pdf.internal.pageSize.getHeight();
-                                      const margin = 10; // Minimal margin for maximum space
-                                      const lineHeight = 5; // Compact line height in mm
-                                      const fontSize = 9; // Small font for smaller file size
-                                      
-                                      pdf.setFontSize(fontSize);
-                                      pdf.setFont('helvetica', 'normal'); // Lightweight font for smaller file size
-                                      
-                                      // Split text into lines and handle word wrapping
-                                      const maxWidth = pageWidth - (margin * 2);
-                                      let y = margin;
-                                      const lines = plainText.split('\n');
-                                      
-                                      lines.forEach((line) => {
-                                        if (!line.trim()) {
-                                          // Empty line - add small spacing
-                                          y += lineHeight * 0.5;
-                                          return;
-                                        }
+                                        // Create PDF using jsPDF with text-based rendering (much smaller file size)
+                                        const pdf = new jsPDF('p', 'mm', 'a4');
+                                        const pageWidth = pdf.internal.pageSize.getWidth();
+                                        const pageHeight = pdf.internal.pageSize.getHeight();
+                                        const margin = 10; // Minimal margin for maximum space
+                                        const lineHeight = 5; // Compact line height in mm
+                                        const fontSize = 9; // Small font for smaller file size
                                         
-                                        // Split long lines to fit page width
-                                        const words = line.split(' ');
-                                        let currentLine = '';
+                                        pdf.setFontSize(fontSize);
+                                        pdf.setFont('helvetica', 'normal'); // Lightweight font for smaller file size
                                         
-                                        words.forEach((word) => {
-                                          const testLine = currentLine ? `${currentLine} ${word}` : word;
-                                          const textWidth = pdf.getTextWidth(testLine);
+                                        // Split text into lines and handle word wrapping
+                                        const maxWidth = pageWidth - (margin * 2);
+                                        let y = margin;
+                                        const lines = plainText.split('\n');
+                                        
+                                        lines.forEach((line) => {
+                                          if (!line.trim()) {
+                                            // Empty line - add small spacing
+                                            y += lineHeight * 0.5;
+                                            return;
+                                          }
                                           
-                                          if (textWidth > maxWidth && currentLine) {
-                                            // Current line is full, write it and start new line
+                                          // Split long lines to fit page width
+                                          const words = line.split(' ');
+                                          let currentLine = '';
+                                          
+                                          words.forEach((word) => {
+                                            const testLine = currentLine ? `${currentLine} ${word}` : word;
+                                            const textWidth = pdf.getTextWidth(testLine);
+                                            
+                                            if (textWidth > maxWidth && currentLine) {
+                                              // Current line is full, write it and start new line
+                                              if (y > pageHeight - margin - lineHeight) {
+                                                pdf.addPage();
+                                                y = margin;
+                                              }
+                                              pdf.text(currentLine, margin, y);
+                                              y += lineHeight;
+                                              currentLine = word;
+                                            } else {
+                                              currentLine = testLine;
+                                            }
+                                          });
+                                          
+                                          // Write remaining line
+                                          if (currentLine) {
                                             if (y > pageHeight - margin - lineHeight) {
                                               pdf.addPage();
                                               y = margin;
                                             }
                                             pdf.text(currentLine, margin, y);
                                             y += lineHeight;
-                                            currentLine = word;
-                                          } else {
-                                            currentLine = testLine;
                                           }
                                         });
                                         
-                                        // Write remaining line
-                                        if (currentLine) {
-                                          if (y > pageHeight - margin - lineHeight) {
-                                        pdf.addPage();
-                                            y = margin;
-                                          }
-                                          pdf.text(currentLine, margin, y);
-                                          y += lineHeight;
+                                        // Remove loading message
+                                        if (loadingMsg && loadingMsg.parentNode) {
+                                          document.body.removeChild(loadingMsg);
                                         }
-                                      });
 
-                                      // Remove loading message
-                                      if (loadingMsg && loadingMsg.parentNode) {
-                                        document.body.removeChild(loadingMsg);
-                                      }
+                                        // Generate filename
+                                        const baseFileName = (judgmentInfo?.title || 'judgment').replace(/[^a-z0-9]/gi, '_');
+                                        const fileName = `${baseFileName}_translated.pdf`;
+                                        
+                                        // Download PDF (text-based, much smaller file size)
+                                        pdf.save(fileName);
+                                        console.log('PDF downloaded successfully (text-based, optimized size):', fileName);
+                                      } else {
+                                        // HTML2CANVAS APPROACH FOR NON-ENGLISH LANGUAGES (supports Unicode/Indic scripts)
+                                        console.log('Generating PDF for non-English language:', currentLang);
+                                        console.log('Final markdown length:', finalMarkdown?.length);
+                                        
+                                        if (!finalMarkdown || finalMarkdown.trim() === '') {
+                                          console.error('Error: finalMarkdown is empty!');
+                                          if (loadingMsg && loadingMsg.parentNode) {
+                                          document.body.removeChild(loadingMsg);
+                                        }
+                                          throw new Error('No content to generate PDF');
+                                        }
+                                        
+                                        // Determine appropriate font family for the language
+                                        const fontFamily = currentLang === 'gu' 
+                                          ? 'Noto Sans Gujarati, Arial Unicode MS, sans-serif'
+                                          : currentLang === 'hi'
+                                          ? 'Noto Sans Devanagari, Arial Unicode MS, sans-serif'
+                                          : currentLang === 'ta'
+                                          ? 'Noto Sans Tamil, Arial Unicode MS, sans-serif'
+                                          : currentLang === 'te'
+                                          ? 'Noto Sans Telugu, Arial Unicode MS, sans-serif'
+                                          : currentLang === 'kn'
+                                          ? 'Noto Sans Kannada, Arial Unicode MS, sans-serif'
+                                          : currentLang === 'ml'
+                                          ? 'Noto Sans Malayalam, Arial Unicode MS, sans-serif'
+                                          : currentLang === 'bn'
+                                          ? 'Noto Sans Bengali, Arial Unicode MS, sans-serif'
+                                          : currentLang === 'mr'
+                                          ? 'Noto Sans Devanagari, Arial Unicode MS, sans-serif'
+                                          : 'Noto Sans Devanagari, Noto Sans Gujarati, Arial Unicode MS, sans-serif';
+                                        
+                                        // Parse markdown to HTML
+                                        let htmlContent;
+                                        try {
+                                          const parseResult = marked.parse(finalMarkdown);
+                                          if (parseResult instanceof Promise) {
+                                            htmlContent = await parseResult;
+                                          } else {
+                                            htmlContent = parseResult;
+                                          }
+                                          if (!htmlContent || htmlContent.trim().length < 10) {
+                                            htmlContent = `<div style="white-space: pre-wrap; font-family: ${fontFamily};">${finalMarkdown.replace(/\n/g, '<br>')}</div>`;
+                                          }
+                                        } catch (parseError) {
+                                          console.warn('Markdown parsing failed, using plain text:', parseError);
+                                          htmlContent = `<div style="white-space: pre-wrap; font-family: ${fontFamily}; line-height: 1.6;">${finalMarkdown.replace(/\n/g, '<br>')}</div>`;
+                                        }
 
-                                      // Generate filename
+                                        // Create a temporary div with the content, styled for PDF
+                                      const tempDiv = document.createElement('div');
+                                      tempDiv.style.position = 'absolute';
+                                      tempDiv.style.left = '-9999px';
+                                        tempDiv.style.top = '0';
+                                        tempDiv.style.width = '210mm';
+                                        tempDiv.style.padding = '15mm';
+                                        tempDiv.style.fontSize = '12pt'; // Slightly larger font for better readability
+                                        tempDiv.style.lineHeight = '1.7';
+                                        tempDiv.style.fontFamily = fontFamily;
+                                      tempDiv.style.color = '#1a1a1a';
+                                      tempDiv.style.backgroundColor = '#ffffff';
+                                        tempDiv.style.direction = 'ltr';
+                                        tempDiv.style.unicodeBidi = 'embed';
+                                      tempDiv.style.wordWrap = 'break-word';
+                                        tempDiv.style.overflowWrap = 'break-word';
+                                        tempDiv.style.textAlign = 'left';
+                                        
+                                        // Add CSS for better formatting
+                                        const pdfStyle = document.createElement('style');
+                                        pdfStyle.setAttribute('data-pdf-style', 'true');
+                                        pdfStyle.textContent = `
+                                          div[style*="210mm"] p {
+                                            margin-bottom: 0.8em;
+                                            margin-top: 0;
+                                            page-break-inside: avoid;
+                                          }
+                                          div[style*="210mm"] h1,
+                                          div[style*="210mm"] h2,
+                                          div[style*="210mm"] h3,
+                                          div[style*="210mm"] h4,
+                                          div[style*="210mm"] h5,
+                                          div[style*="210mm"] h6 {
+                                            page-break-after: avoid;
+                                            margin-top: 1em;
+                                            margin-bottom: 0.5em;
+                                          }
+                                          div[style*="210mm"] ul,
+                                          div[style*="210mm"] ol {
+                                            page-break-inside: avoid;
+                                            margin-bottom: 0.8em;
+                                          }
+                                          div[style*="210mm"] li {
+                                            page-break-inside: avoid;
+                                          }
+                                        `;
+                                        document.head.appendChild(pdfStyle);
+                                        
+                                        // Clean HTML to remove ALL problematic elements and data URIs
+                                        let cleanHtmlContent = htmlContent
+                                          // Remove all images (including data URIs)
+                                          .replace(/<img[^>]*>/gi, '')
+                                          .replace(/<img[^>]*\/>/gi, '')
+                                          // Remove all SVGs
+                                          .replace(/<svg[\s\S]*?<\/svg>/gi, '')
+                                          // Remove all canvases
+                                          .replace(/<canvas[\s\S]*?<\/canvas>/gi, '')
+                                          // Remove data URIs from style attributes
+                                          .replace(/data:image[^;]*;base64,[^"'\s)]*/gi, '')
+                                          .replace(/data:image\/[^;]*;base64,[^"'\s)]*/gi, '')
+                                          // Remove background-image data URIs
+                                          .replace(/background-image:\s*url\(data:[^)]*\)/gi, '')
+                                          // Remove any remaining data URIs
+                                          .replace(/data:[^"'\s)]*/gi, '');
+                                        
+                                        tempDiv.innerHTML = cleanHtmlContent;
+                                      document.body.appendChild(tempDiv);
+
+                                        // Wait for fonts to load
+                                        await Promise.all([
+                                          new Promise(resolve => setTimeout(resolve, 800)),
+                                          document.fonts?.ready || Promise.resolve()
+                                        ]);
+                                        
+                                        // Force layout calculation
+                                        void tempDiv.offsetHeight;
+                                        
+                                        // Verify content exists
+                                        const hasContent = tempDiv.textContent && tempDiv.textContent.trim().length > 0;
+                                        const innerHTMLHasContent = tempDiv.innerHTML && tempDiv.innerHTML.trim().length > 0;
+                                        if (!hasContent && !innerHTMLHasContent) {
+                                          if (tempDiv && tempDiv.parentNode) {
+                                      document.body.removeChild(tempDiv);
+                                          }
+                                          if (loadingMsg && loadingMsg.parentNode) {
+                                            document.body.removeChild(loadingMsg);
+                                          }
+                                          throw new Error('No content to render in PDF');
+                                        }
+                                        
+                                        tempDiv.style.visibility = 'visible';
+                                        tempDiv.style.opacity = '1';
+
+                                        // Generate PDF using html2canvas directly (better control and error handling)
+                                      const pdf = new jsPDF('p', 'mm', 'a4');
+                                      const pageWidth = pdf.internal.pageSize.getWidth();
+                                      const pageHeight = pdf.internal.pageSize.getHeight();
+                                        const margin = 15;
+                                        const contentWidth = pageWidth - (margin * 2);
+
+                                        try {
+                                          // Use html2canvas directly for better control
+                                          const canvas = await html2canvas(tempDiv, {
+                                            scale: 1.0, // Higher scale for better readability
+                                            useCORS: false, // Disable CORS to avoid issues
+                                            logging: false,
+                                            backgroundColor: '#ffffff',
+                                            removeContainer: false,
+                                            allowTaint: false,
+                                            pixelRatio: window.devicePixelRatio || 1, // Use device pixel ratio for better quality
+                                            letterRendering: true,
+                                            foreignObjectRendering: false, // Disable to avoid atob errors
+                                            onclone: (clonedDoc) => {
+                                              // Remove all problematic elements from cloned document
+                                              const clonedDiv = clonedDoc.querySelector('div[style*="210mm"]') || clonedDoc.body;
+                                              if (clonedDiv) {
+                                                clonedDiv.style.fontFamily = tempDiv.style.fontFamily;
+                                                clonedDiv.style.fontSize = tempDiv.style.fontSize;
+                                                clonedDiv.style.lineHeight = tempDiv.style.lineHeight;
+                                                clonedDiv.style.visibility = 'visible';
+                                                clonedDiv.style.opacity = '1';
+                                              }
+                                              
+                                              // Aggressively remove all problematic elements
+                                              const images = clonedDoc.querySelectorAll('img');
+                                              images.forEach(img => {
+                                                try {
+                                                  img.remove();
+                                                } catch (e) {
+                                                  img.style.display = 'none';
+                                                }
+                                              });
+                                              
+                                              const svgs = clonedDoc.querySelectorAll('svg');
+                                              svgs.forEach(svg => {
+                                                try {
+                                                  svg.remove();
+                                                } catch (e) {
+                                                  svg.style.display = 'none';
+                                                }
+                                              });
+                                              
+                                              const canvases = clonedDoc.querySelectorAll('canvas');
+                                              canvases.forEach(canvas => {
+                                                try {
+                                                  canvas.remove();
+                                                } catch (e) {
+                                                  canvas.style.display = 'none';
+                                                }
+                                              });
+                                              
+                                              // Remove all elements with data URIs
+                                              const allElements = clonedDoc.querySelectorAll('*');
+                                              allElements.forEach(el => {
+                                                try {
+                                                  // Check style attribute
+                                                  if (el.style && el.style.backgroundImage) {
+                                                    if (el.style.backgroundImage.includes('data:')) {
+                                                      el.style.backgroundImage = 'none';
+                                                    }
+                                                  }
+                                                  // Check all attributes
+                                                  Array.from(el.attributes || []).forEach(attr => {
+                                                    if (attr.value && attr.value.includes('data:image')) {
+                                                      el.removeAttribute(attr.name);
+                                                    }
+                                                  });
+                                                } catch (e) {
+                                                  // Ignore errors
+                                                }
+                                              });
+                                            }
+                                          });
+
+                                          // Calculate dimensions for proper page breaks
+                                          const imgWidth = canvas.width;
+                                          const imgHeight = canvas.height;
+                                          const imgAspectRatio = imgWidth / imgHeight;
+                                          
+                                          // Calculate PDF dimensions
+                                          const pdfContentWidth = contentWidth;
+                                          const pdfContentHeight = pdfContentWidth / imgAspectRatio;
+                                          const maxPageHeight = pageHeight - (margin * 2);
+                                          
+                                          // Split content across pages if needed
+                                          if (pdfContentHeight <= maxPageHeight) {
+                                            // Content fits on one page
+                                            pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', margin, margin, pdfContentWidth, pdfContentHeight);
+                                          } else {
+                                            // Content needs multiple pages - split the canvas
+                                            const totalPages = Math.ceil(pdfContentHeight / maxPageHeight);
+                                            const sourceHeight = imgHeight / totalPages;
+                                            
+                                            for (let page = 0; page < totalPages; page++) {
+                                              if (page > 0) {
+                                                pdf.addPage();
+                                              }
+                                              
+                                              // Calculate source and destination coordinates
+                                              const sourceY = page * sourceHeight;
+                                              const destHeight = Math.min(maxPageHeight, pdfContentHeight - (page * maxPageHeight));
+                                              
+                                              // Create a temporary canvas for this page
+                                              const pageCanvas = document.createElement('canvas');
+                                              pageCanvas.width = imgWidth;
+                                              pageCanvas.height = Math.min(sourceHeight, imgHeight - sourceY);
+                                              const pageCtx = pageCanvas.getContext('2d');
+                                              
+                                              // Draw the portion of the original canvas
+                                              pageCtx.drawImage(
+                                                canvas,
+                                                0, sourceY, imgWidth, pageCanvas.height,  // Source
+                                                0, 0, imgWidth, pageCanvas.height          // Destination
+                                              );
+                                              
+                                              // Add to PDF with better quality
+                                              pdf.addImage(
+                                                pageCanvas.toDataURL('image/jpeg', 0.92), // Higher quality for readability
+                                                'JPEG',
+                                                margin,
+                                                margin,
+                                                pdfContentWidth,
+                                                destHeight
+                                              );
+                                            }
+                                          }
+
+                                          // Cleanup
+                                          if (pdfStyle && pdfStyle.parentNode) {
+                                            document.head.removeChild(pdfStyle);
+                                          }
+                                          if (tempDiv && tempDiv.parentNode) {
+                                            document.body.removeChild(tempDiv);
+                                          }
+                                          if (loadingMsg && loadingMsg.parentNode) {
+                                            document.body.removeChild(loadingMsg);
+                                          }
+
+                                          // Save PDF
                                       const baseFileName = (judgmentInfo?.title || 'judgment').replace(/[^a-z0-9]/gi, '_');
-                                      const fileName = currentLang !== 'en' 
-                                        ? `${baseFileName}_${langName}.pdf`
-                                        : `${baseFileName}_translated.pdf`;
-                                      
-                                      // Download PDF (text-based, much smaller file size)
+                                          const fileName = `${baseFileName}_${langName}.pdf`;
                                       pdf.save(fileName);
-                                      console.log('PDF downloaded successfully (text-based, optimized size):', fileName);
+                                          console.log('PDF downloaded successfully (html2canvas, Unicode support):', fileName);
+                                        } catch (htmlError) {
+                                          console.error('Error in html2canvas:', htmlError);
+                                          // Cleanup on error
+                                          const style = document.querySelector('style[data-pdf-style]');
+                                          if (style && style.parentNode) {
+                                            document.head.removeChild(style);
+                                          }
+                                          if (tempDiv && tempDiv.parentNode) {
+                                            document.body.removeChild(tempDiv);
+                                          }
+                                          if (loadingMsg && loadingMsg.parentNode) {
+                                            document.body.removeChild(loadingMsg);
+                                          }
+                                          throw new Error(`Failed to generate PDF: ${htmlError.message || 'Unknown error'}`);
+                                        }
+                                      }
                                       
                                       } catch (error) {
                                       console.error('Error generating PDF:', error);

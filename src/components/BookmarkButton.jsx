@@ -396,7 +396,7 @@ const BookmarkButton = ({
       {showFolderSelector && (
         <div
           ref={folderSelectorRef}
-          className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[200px] max-w-[300px]"
+          className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[200px] max-w-[300px]"
           style={{ fontFamily: 'Roboto, sans-serif' }}
         >
           <div className="p-3 border-b border-gray-200 flex items-center justify-between">
