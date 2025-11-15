@@ -4,7 +4,6 @@ import { AuthProvider } from "./contexts/AuthContext";
 import GoogleTranslate from "./components/GoogleTranslate";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import LegalJudgments from "./pages/LegalJudgments";
 import ViewPDF from "./pages/ViewPDF";
 import BrowseActs from "./pages/BrowseActs";
@@ -46,7 +45,6 @@ function AppLayout() {
   // Pages where chatbot should be hidden
   const hideChatbotPaths = [
     '/login',
-    '/signup',
     '/judgment',
     '/act-details',
     '/mapping-details',
@@ -58,7 +56,6 @@ function AppLayout() {
   // Pages where footer should be hidden
   const hideFooterPaths = [
     '/login',
-    '/signup',
     '/dashboard',
     '/profile',
     '/judgment-access',
@@ -89,7 +86,8 @@ function AppLayout() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/home" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* Signup route removed - redirecting to login */}
+        <Route path="/signup" element={<Login />} />
         <Route path="/about" element={<About />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/blog" element={<Blog />} />

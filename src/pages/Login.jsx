@@ -425,13 +425,6 @@ export default function Login() {
                 </p>
                 <div className="space-y-2 sm:space-y-3 w-full max-w-xs">
                   <button
-                    className="w-full bg-white/20 backdrop-blur-sm text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 transform hover:scale-105 border border-white/30 text-sm sm:text-base"
-                    onClick={() => navigate("/signup")}
-                    style={{ fontFamily: 'Roboto, sans-serif', minHeight: '44px' }}
-                  >
-                    Don't have an account? Sign Up
-                  </button>
-                  <button
                     className="w-full bg-transparent border-2 border-white/50 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
                     onClick={() => navigate("/")}
                     style={{ fontFamily: 'Roboto, sans-serif', minHeight: '44px' }}

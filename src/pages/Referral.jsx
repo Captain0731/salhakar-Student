@@ -69,7 +69,7 @@ export default function Referral() {
   };
 
   const shareReferralLink = () => {
-    const referralLink = `${window.location.origin}/signup?ref=${referralCode}`;
+    const referralLink = `${window.location.origin}/login?ref=${referralCode}`;
     navigator.clipboard.writeText(referralLink);
     alert('Referral link copied to clipboard!');
   };
@@ -190,7 +190,7 @@ export default function Referral() {
               <p className="text-xs sm:text-sm text-blue-800 break-words" style={{ fontFamily: 'Roboto, sans-serif' }}>
                 <strong>Sign up</strong> to get your personalized referral code and start earning rewards! 
                 <button
-                  onClick={() => navigate('/signup')}
+                  onClick={() => navigate('/login')}
                   className="ml-1 sm:ml-2 text-blue-600 underline font-semibold hover:text-blue-800"
                 >
                   Sign up now
@@ -230,7 +230,7 @@ export default function Referral() {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
               <div className="flex-1 bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
                 <p className="text-xs sm:text-sm text-gray-600 break-all" style={{ fontFamily: 'Roboto, sans-serif' }}>
-                  {window.location.origin}/signup?ref={referralCode}
+                  {window.location.origin}/login?ref={referralCode}
                 </p>
               </div>
               

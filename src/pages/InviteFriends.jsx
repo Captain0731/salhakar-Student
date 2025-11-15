@@ -195,7 +195,7 @@ export default function InviteFriends() {
               <div className="space-y-3">
                 <button
                   onClick={() => {
-                    const message = `Hi! I've been using सलहाकार for legal services and it's amazing! Join me using my referral code: ${referralCode}. Sign up at ${window.location.origin}/signup?ref=${referralCode}`;
+                    const message = `Hi! I've been using सलहाकार for legal services and it's amazing! Join me using my referral code: ${referralCode}. Sign in at ${window.location.origin}/login?ref=${referralCode}`;
                     navigator.clipboard.writeText(message);
                     alert('Message copied to clipboard!');
                   }}
@@ -208,7 +208,7 @@ export default function InviteFriends() {
                 <button
                   onClick={() => {
                     const subject = 'Join me on सलहाकार - Legal Services Platform';
-                    const body = `Hi there!\n\nI've been using सलहाकार for legal services and it's been incredibly helpful. I thought you might be interested too!\n\nUse my referral code: ${referralCode}\nSign up here: ${window.location.origin}/signup?ref=${referralCode}\n\nBest regards!`;
+                    const body = `Hi there!\n\nI've been using सलहाकार for legal services and it's been incredibly helpful. I thought you might be interested too!\n\nUse my referral code: ${referralCode}\nSign in here: ${window.location.origin}/login?ref=${referralCode}\n\nBest regards!`;
                     const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                     window.open(mailtoLink);
                   }}
